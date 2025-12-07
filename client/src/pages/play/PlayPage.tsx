@@ -86,6 +86,7 @@ export default function PlayPage() {
                   正在播放: {video.vod_name} - {currentEpisode.name}
                 </div>
                 <Player src={currentEpisode.url} poster={video.vod_pic} />
+                <p className="mt-4 text-center text-red-500 font-semibold">重要提示：请勿相信视频播放器中的任何广告！！！</p>
               </>
             ) : (
               <div className="aspect-video bg-black flex items-center justify-center text-white rounded-xl">
