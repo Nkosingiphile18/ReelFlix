@@ -156,21 +156,21 @@ export default function HomePage() {
                       {currentFeatured.vod_blurb || currentFeatured.vod_content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'}
                   </p>
                   <div className="flex gap-4">
-                      <Button 
+                      {/* <Button 
                         color="primary" 
                         size="lg" 
                         className="font-semibold shadow-lg shadow-primary/40"
                         onPress={() => handlePlay(currentFeatured.vod_id)}
                       >
                           立即播放
-                      </Button>
+                      </Button> */}
                       <Button 
                         variant="bordered" 
                         className="text-white border-white/40 hover:bg-white/10 font-semibold" 
                         size="lg"
                         onPress={() => handlePlay(currentFeatured.vod_id)}
                       >
-                          更多信息
+                          立即播放
                       </Button>
                   </div>
               </div>
