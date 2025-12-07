@@ -17,9 +17,17 @@ interface SettingsContextType {
   setCurrentSourceIndex: (index: number) => void;
 }
 
-const defaultSources: ApiSource[] = [
-  { name: '默认源 (JS资源)', url: 'https://jszyapi.com/api.php/provide/vod/' }
-];
+const defaultSources: ApiSource[] = (() => {
+  try {
+    const envSources = import.meta.env.VITE_API_SOURCES;
+    if (envSources) {
+      return JSON.parse(envSources);
+    }
+  } catch (e) {
+    console.error('Failed to parse VITE_API_SOURCES', e);
+  }
+  return [];
+})();
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
