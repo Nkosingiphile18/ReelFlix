@@ -17,20 +17,7 @@ interface SettingsContextType {
   setCurrentSourceIndex: (index: number) => void;
 }
 
-const defaultSources: ApiSource[] = (() => {
-  const count = parseInt(import.meta.env.REEL_FLIEX_SOURCES_COUNT || '0', 10);
-  const sources: ApiSource[] = [];
-  
-  for (let i = 1; i <= count; i++) {
-    const name = import.meta.env[`REEL_FLIX_SOURCE_${i}_NAME`];
-    const url = import.meta.env[`REEL_FLIX_SOURCE_${i}_URL`];
-    if (name && url) {
-      sources.push({ name, url });
-    }
-  }
-  
-  return sources;
-})();
+const defaultSources: ApiSource[] = [];
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -47,7 +34,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const currentSource = sources[currentSourceIndex] || sources[0];
+  // 添加保护措施处理空源的情况
+  const currentSource = sources.length > 0 ? (sources[currentSourceIndex] || sources[0]) : { name: '', url: '' };
 
   useEffect(() => {
     localStorage.setItem('reelFlix_sources', JSON.stringify(sources));
@@ -59,7 +47,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const fetchSourceCategories = async () => {
-      if (!currentSource?.url) return;
+      // 如果没有可用的源或当前源无效，清空分类并返回
+      if (sources.length === 0 || !currentSource?.url) {
+        setCategories([]);
+        return;
+      }
 
       const cacheKey = `reelFlix_categories_${currentSource.url}`;
       const cached = localStorage.getItem(cacheKey);
@@ -82,11 +74,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
       } catch (err) {
         console.error('Failed to fetch categories:', err);
+        setCategories([]);
       }
     };
 
     fetchSourceCategories();
-  }, [currentSource]);
+  }, [currentSource, sources.length]);
 
   const addSource = (source: ApiSource) => {
     setSources([...sources, source]);
@@ -95,7 +88,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const removeSource = (index: number) => {
     const newSources = sources.filter((_, i) => i !== index);
     setSources(newSources);
-    if (currentSourceIndex >= index && currentSourceIndex > 0) {
+    
+    // 如果删除后没有源了，将当前源索引设为0
+    if (newSources.length === 0) {
+      setCurrentSourceIndex(0);
+    } else if (currentSourceIndex >= index && currentSourceIndex > 0) {
       setCurrentSourceIndex(currentSourceIndex - 1);
     }
   };

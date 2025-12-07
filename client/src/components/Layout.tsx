@@ -23,7 +23,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { currentSource, categories } = useSettings();
+  const { currentSource, categories, sources } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -54,50 +54,56 @@ export default function Layout({ children }: LayoutProps) {
             <p className="hidden sm:block font-bold text-inherit text-2xl bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">ReelFlix</p>
           </NavbarBrand>
           <NavbarContent className="hidden sm:flex gap-3">
-            <NavbarItem isActive={location.pathname === '/' && !currentCategory}>
-              <Link 
-                color={location.pathname === '/' && !currentCategory ? "secondary" : "foreground"} 
-                href="#" 
-                onPress={() => navigate('/')}
-              >
-                首页
-              </Link>
-            </NavbarItem>
-            {mainCategories.map(cat => (
-              <NavbarItem key={cat.type_id} isActive={currentCategory === cat.type_id.toString()}>
-                <Link 
-                  color={currentCategory === cat.type_id.toString() ? "secondary" : "foreground"} 
-                  href="#" 
-                  onPress={() => navigate(`/?category=${cat.type_id}`)}
-                >
-                  {cat.type_name}
-                </Link>
-              </NavbarItem>
-            ))}
+            {sources.length > 0 && (
+              <>
+                <NavbarItem isActive={location.pathname === '/' && !currentCategory}>
+                  <Link 
+                    color={location.pathname === '/' && !currentCategory ? "secondary" : "foreground"} 
+                    href="#" 
+                    onPress={() => navigate('/')}
+                  >
+                    最近更新
+                  </Link>
+                </NavbarItem>
+                {mainCategories.map(cat => (
+                  <NavbarItem key={cat.type_id} isActive={currentCategory === cat.type_id.toString()}>
+                    <Link 
+                      color={currentCategory === cat.type_id.toString() ? "secondary" : "foreground"} 
+                      href="#" 
+                      onPress={() => navigate(`/?category=${cat.type_id}`)}
+                    >
+                      {cat.type_name}
+                    </Link>
+                  </NavbarItem>
+                ))}
+              </>
+            )}
           </NavbarContent>
         </NavbarContent>
 
         <NavbarContent as="div" className="items-center" justify="end">
-          <Input
-            classNames={{
-              base: "max-w-full sm:max-w-[15rem] h-10",
-              mainWrapper: "h-full",
-              input: "text-small outline-none",
-              inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-            }}
-            placeholder="搜索..."
-            size="sm"
-            startContent={
-                <svg aria-hidden="true" fill="none" focusable="false" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" className="text-default-400 pointer-events-none flex-shrink-0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            }
-            type="search"
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            onKeyDown={handleSearch}
-          />
+          {sources.length > 0 && (
+            <Input
+              classNames={{
+                base: "max-w-full sm:max-w-[15rem] h-10",
+                mainWrapper: "h-full",
+                input: "text-small outline-none",
+                inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+              }}
+              placeholder="搜索..."
+              size="sm"
+              startContent={
+                  <svg aria-hidden="true" fill="none" focusable="false" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" className="text-default-400 pointer-events-none flex-shrink-0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+              }
+              type="search"
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              onKeyDown={handleSearch}
+            />
+          )}
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <Avatar
@@ -112,8 +118,8 @@ export default function Layout({ children }: LayoutProps) {
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">当前主页源</p>
-                <p className="font-semibold text-xs text-default-500">{currentSource.name}</p>
+                <p className="font-semibold">当前媒资展示源</p>
+                <p className="font-semibold text-xs text-default-500">{sources.length > 0 ? currentSource.name : '未配置'}</p>
               </DropdownItem>
               <DropdownItem key="settings" onPress={onOpen}>设置</DropdownItem>
               <DropdownItem key="help_and_feedback" onPress={onOpenHelp}>帮助与反馈</DropdownItem>

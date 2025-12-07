@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { Button, Card, CardBody, Spinner, Chip, ScrollShadow } from "@heroui/react";
+import { useParams, useSearchParams } from 'react-router-dom';
+import { Button, Card, CardBody, Spinner, Chip, ScrollShadow, useDisclosure } from "@heroui/react";
 import { useSettings } from '../../context/SettingsContext';
 import { fetchVideoDetail } from '../../services/api';
 import { VideoItem } from '../../types/video';
 import Player from '../../components/Player';
+import EmptySourcesState from '../../components/EmptySourcesState';
+import SettingsModal from '../../components/SettingsModal';
 
 interface Episode {
   name: string;
@@ -21,7 +23,8 @@ export default function PlayPage() {
   const [searchParams] = useSearchParams();
   const sourceUrlParam = searchParams.get('source');
   
-  const { currentSource } = useSettings();
+  const { currentSource, sources } = useSettings();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [video, setVideo] = useState<VideoItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +35,8 @@ export default function PlayPage() {
   const activeSourceUrl = sourceUrlParam || currentSource.url;
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || sources.length === 0) return;
+    
     setLoading(true);
     fetchVideoDetail(activeSourceUrl, parseInt(id))
       .then(res => {
@@ -75,7 +79,12 @@ export default function PlayPage() {
   if (error || !video) return <div className="flex justify-center items-center h-[50vh] text-red-500">{error || 'Video not found'}</div>;
 
   return (
-    <div className="bg-background text-foreground dark p-6">
+    <>
+      <SettingsModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      {sources.length === 0 ? (
+        <EmptySourcesState onOpenSettings={onOpen} />
+      ) : (
+        <div className="bg-background text-foreground dark p-6">
       <div className="container mx-auto max-w-7xl">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -149,6 +158,8 @@ export default function PlayPage() {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

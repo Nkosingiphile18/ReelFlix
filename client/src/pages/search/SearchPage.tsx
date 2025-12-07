@@ -8,11 +8,14 @@ import {
   Chip, 
   Spinner,
   Listbox,
-  ListboxItem
+  ListboxItem,
+  useDisclosure
 } from "@heroui/react";
 import { useSettings } from '../../context/SettingsContext';
 import { fetchVideoList } from '../../services/api';
 import { VideoItem } from '../../types/video';
+import EmptySourcesState from '../../components/EmptySourcesState';
+import SettingsModal from '../../components/SettingsModal';
 
 interface SearchResultItem extends VideoItem {
   sourceName: string;
@@ -24,6 +27,7 @@ export default function SearchPage() {
   const query = searchParams.get('q') || '';
   const { sources } = useSettings();
   const navigate = useNavigate();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +38,7 @@ export default function SearchPage() {
   const lastSearchTimeRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!query) return;
+    if (!query || sources.length === 0) return;
 
     const performSearch = async () => {
       setLoading(true);
@@ -45,7 +49,7 @@ export default function SearchPage() {
         const promises = sources.map(async (source) => {
           try {
             const response = await fetchVideoList(source.url, 1, undefined, query);
-            return response.list.map(item => ({
+            return (response.list || []).map(item => ({
               ...item,
               sourceName: source.name,
               sourceUrl: source.url
@@ -120,7 +124,12 @@ export default function SearchPage() {
   ], [sources, results.length, sourceCounts]);
 
   return (
-    <div className="container mx-auto max-w-7xl px-6 pt-6 flex flex-col md:flex-row gap-6 min-h-[80vh]">
+    <>
+      <SettingsModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      {sources.length === 0 ? (
+        <EmptySourcesState onOpenSettings={onOpen} />
+      ) : (
+        <div className="container mx-auto max-w-7xl px-6 pt-6 flex flex-col md:flex-row gap-6 min-h-[80vh]">
       {/* Sidebar - Source Filter */}
       <div className="w-full md:w-64 flex-shrink-0">
         <div className="sticky top-24">
@@ -213,6 +222,8 @@ export default function SearchPage() {
           </>
         )}
       </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
