@@ -192,7 +192,7 @@ export default function HomePage() {
           <section className="mb-12">
               <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">最新更新</h2>
-                  <Link href="#" color="primary" showAnchorIcon>查看全部</Link>
+                  {/* <Link href="#" color="primary" showAnchorIcon>查看全部</Link> */}
               </div>
               
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
