@@ -76,7 +76,7 @@ export default function SearchPage() {
     const timeSinceLast = now - lastSearchTimeRef.current;
     const minInterval = 5000; // 5 seconds
 
-    let timer: NodeJS.Timeout;
+    let timer: number;
 
     if (timeSinceLast < minInterval) {
       const delay = minInterval - timeSinceLast;
@@ -179,6 +179,11 @@ export default function SearchPage() {
                     className="border-none bg-transparent hover:scale-105 transition-transform duration-200"
                   >
                     <CardBody className="overflow-visible p-0 relative aspect-[2/3] rounded-lg group">
+                      {/* Blurred background for small images */}
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center blur-md"
+                        style={{ backgroundImage: `url(${video.vod_pic})` }}
+                      />
                       <Image
                         shadow="sm"
                         radius="lg"

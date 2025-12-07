@@ -205,6 +205,11 @@ export default function HomePage() {
                     className="border-none bg-transparent hover:scale-105 transition-transform duration-200"
                   >
                       <CardBody className="overflow-visible p-0 relative aspect-[2/3] rounded-lg group">
+                          {/* Blurred background for small images */}
+                          <div 
+                            className="absolute inset-0 bg-cover bg-center blur-md"
+                            style={{ backgroundImage: `url(${video.vod_pic})` }}
+                          />
                           <Image
                               shadow="sm"
                               radius="lg"
