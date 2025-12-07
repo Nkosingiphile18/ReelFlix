@@ -92,4 +92,11 @@ export interface VideoListResponse {
   limit: string;
   total: number;
   list: VideoItem[];
+  class?: Category[];
+}
+
+export interface Category {
+  type_id: number;
+  type_pid: number;
+  type_name: string;
 }

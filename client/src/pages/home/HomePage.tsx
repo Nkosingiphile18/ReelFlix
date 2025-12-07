@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Card,
@@ -9,11 +9,13 @@ import {
   Chip,
   Spinner,
   Link,
-  useDisclosure
+  useDisclosure,
+  Tabs,
+  Tab
 } from "@heroui/react";
 import { useSettings } from '../../context/SettingsContext';
-import { fetchVideoList } from '../../services/api';
-import { VideoItem } from '../../types/video';
+import { fetchVideoList, fetchCategories } from '../../services/api';
+import { VideoItem, Category } from '../../types/video';
 import SettingsModal from '../../components/SettingsModal';
 
 export default function HomePage() {
@@ -24,10 +26,53 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedTab, setSelectedTab] = useState<string>('home');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<number | null>(null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    fetchCategories(currentSource.url)
+      .then(res => {
+        if (res.class) {
+          setCategories(res.class);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch categories:', err);
+      });
+  }, [currentSource]);
+
+  // Main categories (type_pid === 0)
+  const mainCategories = useMemo(() => {
+    return categories.filter(cat => cat.type_pid === 0);
+  }, [categories]);
+
+  // Sub categories for selected tab
+  const subCategories = useMemo(() => {
+    if (selectedTab === 'home') return [];
+    const mainCat = mainCategories.find(cat => cat.type_id.toString() === selectedTab);
+    if (!mainCat) return [];
+    return categories.filter(cat => cat.type_pid === mainCat.type_id);
+  }, [selectedTab, categories, mainCategories]);
+
+  // Get type IDs to fetch
+  const getTypeIdsForFetch = (): number[] | undefined => {
+    if (selectedTab === 'home') return undefined; // All types
+    
+    if (selectedSubCategory) {
+      return [selectedSubCategory]; // Single sub-category
+    }
+    
+    // Get all sub-category IDs for the selected main category
+    const subs = subCategories.map(cat => cat.type_id);
+    return subs.length > 0 ? subs : [parseInt(selectedTab)];
+  };
 
   useEffect(() => {
     setLoading(true);
-    fetchVideoList(currentSource.url)
+    const typeIds = getTypeIdsForFetch();
+    fetchVideoList(currentSource.url, 1, typeIds)
       .then(res => {
         setVideos(res.list);
         setError(null);
@@ -37,7 +82,7 @@ export default function HomePage() {
         setError('Failed to load videos. Please check your API source settings.');
       })
       .finally(() => setLoading(false));
-  }, [currentSource]);
+  }, [currentSource, selectedTab, selectedSubCategory]);
 
   useEffect(() => {
     if (videos.length === 0) return;
@@ -58,6 +103,55 @@ export default function HomePage() {
   return (
     <div className="container mx-auto max-w-7xl px-6 pt-6">
       <SettingsModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      
+      {/* Category Tabs */}
+      <div className="mb-6">
+        <Tabs 
+          selectedKey={selectedTab} 
+          onSelectionChange={(key) => {
+            setSelectedTab(key.toString());
+            setSelectedSubCategory(null);
+          }}
+          variant="underlined"
+          color="primary"
+          classNames={{
+            tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+            cursor: "w-full bg-primary",
+            tab: "max-w-fit px-0 h-12",
+            tabContent: "group-data-[selected=true]:text-primary"
+          }}
+        >
+          <Tab key="home" title="首页" />
+          {mainCategories.map(cat => (
+            <Tab key={cat.type_id.toString()} title={cat.type_name} />
+          ))}
+        </Tabs>
+      </div>
+
+      {/* Sub-category Filters */}
+      {subCategories.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={selectedSubCategory === null ? "solid" : "flat"}
+            color={selectedSubCategory === null ? "primary" : "default"}
+            onPress={() => setSelectedSubCategory(null)}
+          >
+            全部
+          </Button>
+          {subCategories.map(cat => (
+            <Button
+              key={cat.type_id}
+              size="sm"
+              variant={selectedSubCategory === cat.type_id ? "solid" : "flat"}
+              color={selectedSubCategory === cat.type_id ? "primary" : "default"}
+              onPress={() => setSelectedSubCategory(cat.type_id)}
+            >
+              {cat.type_name}
+            </Button>
+          ))}
+        </div>
+      )}
       
       {loading ? (
         <div className="flex justify-center items-center h-[50vh]">

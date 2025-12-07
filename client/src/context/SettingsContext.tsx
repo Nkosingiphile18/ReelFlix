@@ -15,7 +15,7 @@ interface SettingsContextType {
 }
 
 const defaultSources: ApiSource[] = [
-  { name: '默认源 (JS资源)', url: 'https://jszyapi.com/api.php/provide/vod/at/json' }
+  { name: '默认源 (JS资源)', url: 'https://jszyapi.com/api.php/provide/vod/' }
 ];
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
