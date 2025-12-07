@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, Spinner, Chip, ScrollShadow } from "@heroui/react";
 import { useSettings } from '../../context/SettingsContext';
 import { fetchVideoDetail } from '../../services/api';
@@ -18,6 +18,9 @@ interface PlayGroup {
 
 export default function PlayPage() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const sourceUrlParam = searchParams.get('source');
+  
   const { currentSource } = useSettings();
   const [video, setVideo] = useState<VideoItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,10 +28,13 @@ export default function PlayPage() {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
 
+  // Use source from query param if available, otherwise use current context source
+  const activeSourceUrl = sourceUrlParam || currentSource.url;
+
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetchVideoDetail(currentSource.url, parseInt(id))
+    fetchVideoDetail(activeSourceUrl, parseInt(id))
       .then(res => {
         if (res.list && res.list.length > 0) {
           setVideo(res.list[0]);
@@ -41,7 +47,7 @@ export default function PlayPage() {
         setError('Failed to load video');
       })
       .finally(() => setLoading(false));
-  }, [id, currentSource]);
+  }, [id, activeSourceUrl]);
 
   const playGroups = useMemo<PlayGroup[]>(() => {
     if (!video) return [];
