@@ -41,33 +41,6 @@
 pnpm install
 ```
 
-### 环境配置(以下可选)
-在 `server/` 目录下创建一个 `.env` 文件，添加以下环境变量：
-
-```
-PORT=3000
-```
-
-在 `client/` 目录下创建一个 `.env` 文件，添加以下环境变量：
-
-```
-# API Sources Configuration
-# 标识总共的视频源数量
-REEL_FLIEX_SOURCES_COUNT=3
-
-# 具体视频源的名称和 URL
-# 格式如下所示：
-# 必须按照 REEL_FLIX_SOURCE_{n}_NAME 和 REEL_FLIX_SOURCE_{n}_URL 的格式定义
-REEL_FLIX_SOURCE_1_NAME=example1
-REEL_FLIX_SOURCE_1_URL=https://api.example1.com/provide/vod/
-
-REEL_FLIX_SOURCE_2_NAME=example2
-REEL_FLIX_SOURCE_2_URL=https://api.example2.com/provide/vod/
-
-REEL_FLIX_SOURCE_3_NAME=example3
-REEL_FLIX_SOURCE_3_URL=https://api.example3.com/provide/vod/
-```
-
 ### 本地运行
 
 ```bash
