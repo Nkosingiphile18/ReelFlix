@@ -71,11 +71,11 @@ export default function PlayPage() {
 
   const currentEpisode = playGroups[currentGroupIndex]?.episodes[currentEpisodeIndex];
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen"><Spinner size="lg" /></div>;
-  if (error || !video) return <div className="flex justify-center items-center min-h-screen text-red-500">{error || 'Video not found'}</div>;
+  if (loading) return <div className="flex justify-center items-center h-[50vh]"><Spinner size="lg" /></div>;
+  if (error || !video) return <div className="flex justify-center items-center h-[50vh] text-red-500">{error || 'Video not found'}</div>;
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark p-6">
+    <div className="bg-background text-foreground dark p-6">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-4">
             <Link to="/" className="text-primary hover:underline flex items-center gap-2">

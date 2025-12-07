@@ -23,6 +23,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -38,8 +39,17 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, [currentSource]);
 
-  const featuredVideo = videos.length > 0 ? videos[0] : null;
-  const otherVideos = videos.length > 0 ? videos.slice(1) : [];
+  useEffect(() => {
+    if (videos.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % Math.min(videos.length, 5));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [videos]);
+
+  const featuredVideos = videos.slice(0, 5);
+  const currentFeatured = featuredVideos[activeSlide];
+  const otherVideos = videos.length > 5 ? videos.slice(5) : [];
 
   const handlePlay = (id: number) => {
     navigate(`/play/${id}`);
@@ -60,32 +70,36 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          {/* Hero Section */}
-          {featuredVideo && (
+          {/* Hero Section - Carousel */}
+          {currentFeatured && (
             <section className="mb-12 relative w-full h-[500px] rounded-2xl overflow-hidden shadow-2xl group">
+              {/* Background Image with Transition */}
               <div className="absolute inset-0 bg-black/40 z-10" />
               <img 
-                  src={featuredVideo.vod_pic} 
-                  alt={featuredVideo.vod_name}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  key={currentFeatured.vod_id}
+                  src={currentFeatured.vod_pic} 
+                  alt={currentFeatured.vod_name}
+                  className="w-full h-full object-cover object-center animate-fade-in"
               />
+              
+              {/* Content Overlay */}
               <div className="absolute bottom-0 left-0 z-20 p-8 md:p-12 w-full md:w-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                   <div className="flex gap-2 mb-3">
-                      <Chip color="primary" variant="shadow" size="sm">{featuredVideo.type_name}</Chip>
-                      <Chip color="default" variant="flat" size="sm">{featuredVideo.vod_year}</Chip>
-                      <Chip color="warning" variant="flat" size="sm">{featuredVideo.vod_area}</Chip>
+                      <Chip color="primary" variant="shadow" size="sm">{currentFeatured.type_name}</Chip>
+                      <Chip color="default" variant="flat" size="sm">{currentFeatured.vod_year}</Chip>
+                      <Chip color="warning" variant="flat" size="sm">{currentFeatured.vod_area}</Chip>
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">{featuredVideo.vod_name}</h1>
-                  <h2 className="text-xl md:text-2xl text-gray-300 mb-4 font-light">{featuredVideo.vod_sub}</h2>
+                  <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg line-clamp-1">{currentFeatured.vod_name}</h1>
+                  <h2 className="text-xl md:text-2xl text-gray-300 mb-4 font-light line-clamp-1">{currentFeatured.vod_sub}</h2>
                   <p className="text-gray-200 mb-6 line-clamp-3 max-w-xl text-sm md:text-base">
-                      {featuredVideo.vod_blurb || featuredVideo.vod_content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'}
+                      {currentFeatured.vod_blurb || currentFeatured.vod_content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'}
                   </p>
                   <div className="flex gap-4">
                       <Button 
                         color="primary" 
                         size="lg" 
                         className="font-semibold shadow-lg shadow-primary/40"
-                        onPress={() => handlePlay(featuredVideo.vod_id)}
+                        onPress={() => handlePlay(currentFeatured.vod_id)}
                       >
                           立即播放
                       </Button>
@@ -93,11 +107,22 @@ export default function HomePage() {
                         variant="bordered" 
                         className="text-white border-white/40 hover:bg-white/10 font-semibold" 
                         size="lg"
-                        onPress={() => handlePlay(featuredVideo.vod_id)}
+                        onPress={() => handlePlay(currentFeatured.vod_id)}
                       >
                           更多信息
                       </Button>
                   </div>
+              </div>
+
+              {/* Carousel Indicators */}
+              <div className="absolute bottom-8 right-8 z-30 flex gap-2">
+                {featuredVideos.map((_, idx) => (
+                  <button
+                    key={idx}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === activeSlide ? 'bg-primary w-8' : 'bg-white/50 hover:bg-white'}`}
+                    onClick={() => setActiveSlide(idx)}
+                  />
+                ))}
               </div>
             </section>
           )}
