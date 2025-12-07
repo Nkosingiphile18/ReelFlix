@@ -82,7 +82,7 @@ export default function PlayPage() {
           <div className="lg:col-span-2 space-y-6">
             {currentEpisode ? (
               <>
-                <div className="text-lg font-medium text-default-700 dark:text-default-300">
+                <div className="text-lg font-medium text-default-700 dark:text-default-700">
                   正在播放: {video.vod_name} - {currentEpisode.name}
                 </div>
                 <Player src={currentEpisode.url} poster={video.vod_pic} />
