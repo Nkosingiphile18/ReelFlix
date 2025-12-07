@@ -109,14 +109,14 @@ export default function Layout({ children }: LayoutProps) {
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">当前源</p>
+                <p className="font-semibold">当前主页源</p>
                 <p className="font-semibold text-xs text-default-500">{currentSource.name}</p>
               </DropdownItem>
               <DropdownItem key="settings" onPress={onOpen}>设置</DropdownItem>
               <DropdownItem key="help_and_feedback">帮助与反馈</DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              {/* <DropdownItem key="logout" color="danger">
                 退出登录
-              </DropdownItem>
+              </DropdownItem> */}
             </DropdownMenu>
           </Dropdown>
         </NavbarContent>
