@@ -1,0 +1,48 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.counter-section, .search-section {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+}
+
+.counter-section h2, .search-section h2 {
+  margin-top: 0;
+}
+
+.counter-section p {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.search-section input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+}
+
+h2 {
+  color: #555;
+}
+
+p {
+  color: #666;
+}

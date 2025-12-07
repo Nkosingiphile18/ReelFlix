@@ -1,0 +1,98 @@
+# ReelFlix - 在线影视平台
+
+这是一个使用 React + Vite + HeroUI + Tailwind CSS 构建的前端和 Express (TypeScript) 构建的服务端的在线影视平台。
+
+![项目预览](https://placehold.co/800x400?text=ReelFlix+Preview)
+
+## 项目结构
+
+- `client/` - React 前端应用 (TypeScript + Tailwind CSS)
+- `server/` - Express 服务端 (TypeScript)
+
+## 技术栈
+
+### 前端
+- React 19 (TypeScript)
+- Vite 构建工具
+- HeroUI 组件库
+- Tailwind CSS v3
+- Framer Motion 动画库
+
+### 后端
+- Express 5 (TypeScript)
+- Node.js
+- dotenv 环境变量管理
+- cors 跨域处理
+
+### 开发工具
+- pnpm 包管理器
+- concurrently 并行执行脚本
+- TypeScript 类型检查
+
+## 快速开始
+
+### 先决条件
+- Node.js >= 16
+- pnpm >= 7
+
+### 安装依赖
+
+```bash
+pnpm install
+```
+
+### 启动开发服务器
+
+```bash
+# 同时启动前端和服务端
+pnpm run dev
+
+# 只启动前端
+pnpm run dev:client
+
+# 只启动服务端
+pnpm run dev:server
+```
+
+### 生产构建
+
+```bash
+# 构建前后端应用
+pnpm run build
+
+# 分别构建前端和后端
+pnpm run build:client
+pnpm run build:server
+```
+
+## 项目特点
+
+1. **现代化技术栈** - 使用最新的 React 19 和 Express 5，完全基于 TypeScript
+2. **响应式设计** - 基于 HeroUI 组件库和 Tailwind CSS 构建的响应式用户界面
+3. **类型安全** - 前后端均使用 TypeScript，提供完整的类型检查
+4. **清晰的架构** - 前后端分离，结构清晰易于维护
+5. **开发友好** - 支持热重载和并发开发
+6. **可扩展性** - 模块化的代码结构便于功能扩展
+
+## API 接口
+
+基础 URL: `http://localhost:3000`
+
+### 电影相关接口
+- `GET /api/movies` - 获取电影列表
+- `GET /api/movies/:id` - 获取特定电影
+- `POST /api/movies` - 添加新电影
+- `PUT /api/movies/:id` - 更新电影信息
+- `DELETE /api/movies/:id` - 删除电影
+
+## 项目文档
+
+详细的项目说明请查看 [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) 文件。
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request 来改进这个项目。
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件。
