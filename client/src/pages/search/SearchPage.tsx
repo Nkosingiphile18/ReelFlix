@@ -96,7 +96,9 @@ export default function SearchPage() {
   }, [query, sources]);
 
   const handlePlay = (id: number, sourceUrl: string) => {
-    navigate(`/play/${id}?source=${encodeURIComponent(sourceUrl)}`);
+    // 在新标签页中打开播放页面
+    const url = `/play/${id}?source=${encodeURIComponent(sourceUrl)}`;
+    window.open(url, '_blank');
   };
 
   const filteredResults = useMemo(() => {
